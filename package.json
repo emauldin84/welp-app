@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "db:create":"createdb restaurants-app",
-    "db:init":"psql -f schema.sql restaurants-app && psql -f seed.sql restaurants-app",
-    "db:destroy":"dropdb restaurants-app",
-    "db:reset":"npm run db:destroy; npm run db:create && npm run db:init",
+    "db:create": "createdb restaurants-app",
+    "db:init": "psql -f schema.sql restaurants-app && psql -f seed.sql restaurants-app",
+    "db:destroy": "dropdb restaurants-app",
+    "db:reset": "npm run db:destroy; npm run db:create && npm run db:init",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,5 +23,8 @@
   "homepage": "https://github.com/ebwittenberg/welp-app#readme",
   "dependencies": {
     "pg-promise": "^8.6.4"
+  },
+  "devDependencies": {
+    "mocha": "^6.0.2"
   }
 }
