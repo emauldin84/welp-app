@@ -101,6 +101,34 @@ describe ('User model', () => {
         expect(theUser.email).to.not.equal(theOldEmail);
         expect(theUser.email).to.equal(theNewEmail);
     })
+
+    it('should encrypt the password', async () => {
+        // get user with id 1
+        const theUser = await User.getById(1);
+        // set their password field to "bacon"
+        theUser.setPassword("bacon");
+        // compare their password to "bacon"
+        expect(theUser.password).not.to.equal("bacon");
+        // it should be false
+
+    })
+
+    it('should be able to check for correct passwords', async () => {
+        // get user with id 1
+        const theUser = await User.getById(1);
+        // set their password field to "bacon"
+        theUser.setPassword("bacon");
+        // save them to the database
+        await theUser.save();
+        // get them back out of the database
+        sameUser = await User.getById(1);
+        // ask them if their password is "bacon"
+        const isCorrectPassword = sameUser.checkPassword("bacon");
+        expect(isCorrectPassword).to.be.true;
+
+        const isNotCorrectPassword = sameUser.checkPassword("tofu");
+        expect(isNotCorrectPassword).to.be.false;
+    })
 });
 
 describe ('Review model', () => {
@@ -129,6 +157,8 @@ describe('Users and Reviews', () => {
         const theUser = await User.getById(5);
         // then get all their reviews
         const theReviews = await theUser.getReviews();
+        // console.log(theReviews.length)
+        // const numOfReviews = await theReviews.length
         // confirm that their reviews are in an array
         expect(theReviews).to.be.an.instanceOf(Array);
         // and that the array is the correct length, which should be 2
