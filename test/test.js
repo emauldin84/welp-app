@@ -102,3 +102,13 @@ describe ('User model', () => {
         expect(theUser.email).to.equal(theNewEmail);
     })
 });
+
+describe ('Review model', () => {
+    // Can I get one review?
+    it('should be able to retrieve a review by ID', async () => {
+        const theReview = await Reviews.getById(2);
+        expect(theReview).to.be.an.instanceOf(Reviews);
+    })
+    // Can I get all reviews?
+    // Can I get review by user?
+});

@@ -1,5 +1,6 @@
 // Bring in the database connection
 const db = require('./conn');
+const Restaurant = require('./restaurants')
 
 // declare the class
 class Review {
@@ -11,14 +12,30 @@ class Review {
         this.userId = user_id
     }
 
+    static getById(id) {
+        return db.one(`
+        select *
+        from reviews
+        where id=${id}
+        `)
+            .then((reviewData) => {
+                return new Review(
+                    reviewData.id,
+                    reviewData.score,
+                    reviewData.content,
+                    reviewData.restaurant_id,
+                    reviewData.user_id
+                );
+            })
+    }
 
     static getByRestaurantId(restId) {
         return db.any(`
         select * 
         from reviews
         where reviews.restaurant_id = ${restId};
-
         `)
+
         // create a new instance of Review
         .then(reviewData => {
             const reviewInstance = new Review(
