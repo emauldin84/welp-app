@@ -1,5 +1,6 @@
 // Bring in the database connection
 const db = require('./conn');
+const Reviews = require('./reviews');
 
 // Need a user class.
 // Classes should start with an uppercase letter
@@ -41,6 +42,31 @@ class User {
             password='${this.password}'
         where id=${this.id}
         `)
+    }
+    getReviews() {
+        return db.any(`
+        select *
+        from reviews
+        where user_id=${this.id}
+        `)
+        .then((arrayOfReviewData) => {
+            // equivalent to using .map
+            console.log(arrayOfReviewData)
+            const arrayOfReviewInstances = [];
+
+            arrayOfReviewData.forEach((data) => {
+                const newInstance = new Reviews(
+                    data.id,
+                    data.score,
+                    data.content,
+                    data.restaurant_id,
+                    data.user_id
+                );
+                arrayOfReviewInstances.push(newInstance);
+            });
+            // console.log(arrayOfReviewInstances)
+            return arrayOfReviewInstances
+        });
     }
 }
 

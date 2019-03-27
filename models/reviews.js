@@ -29,6 +29,25 @@ class Review {
             })
     }
 
+    static getAll() {
+        return db.any(`
+        select * 
+        from reviews
+        `)
+            .then((arrayOfReviews) => {
+                return arrayOfReviews.map((reviewData) => {
+                    // console.log(reviewData)
+                    return new Review(
+                        reviewData.id,
+                        reviewData.score,
+                        reviewData.content,
+                        reviewData.restaurant_id,
+                        reviewData.user_id
+                    );
+                });
+            });
+    }
+
     static getByRestaurantId(restId) {
         return db.any(`
         select * 
