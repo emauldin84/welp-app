@@ -7,7 +7,8 @@ const Restaurant = require('./models/restaurants');
 const User = require('./models/users');
 
 const server = http.createServer(async (req, res) => {
-    console.log(req.url)
+    console.log(req)
+
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
 
@@ -20,26 +21,37 @@ const server = http.createServer(async (req, res) => {
         const restaurantJSON = JSON.stringify(allRestaurants);
         res.end(restaurantJSON);
     } else if (req.url.startsWith("/users")) {
+
         
         const parts = req.url.split("/");
         console.log(parts);
         // when the req.url is "/users", parts is [ '', 'users' ]
         // when the req.url is "/users/3" parts is [ '', 'users', '3' ]
-
-        if (parts.length === 2) {
-            const allUsers = await User.getAll();
-            const userJSON = JSON.stringify(allUsers);
-            res.end(userJSON);
-        } else if (parts.length === 3) {
-            // get user by id
-            const userId = parts[2];
-            const theUser = await User.getById(userId);
-            const theUserJSON = JSON.stringify(theUser);
-            res.end(theUserJSON);
-        } else {
-            res.statusCode = 404;
-            res.end('Resource not found.');
+        
+        const method = req.method;
+        if (method === "GET") {
+            if (parts.length === 2) {
+                const allUsers = await User.getAll();
+                const userJSON = JSON.stringify(allUsers);
+                res.end(userJSON);
+            } else if (parts.length === 3) {
+                // get user by id
+                const userId = parts[2];
+                const theUser = await User.getById(userId);
+                const theUserJSON = JSON.stringify(theUser);
+                res.end(theUserJSON);
+            } else {
+                res.statusCode = 404;
+                res.end('Resource not found.');
+            }
+        } else if (method === "POST") {
+            res.end('{ message: "it sounds like you would like to create"}');
+        } else if (method === "PUT") {
+            res.end('{You wanna update, don\'t ya?}')
+        } else if (method === "DELETE") {
+            res.end('{rm the user}')
         }
+
 
 
     
