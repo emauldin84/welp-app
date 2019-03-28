@@ -1,6 +1,7 @@
 // Bring in the database connection
 const db = require('./conn');
 const Reviews = require('./reviews');
+const Favorites = require('./favorites');
 const bcrypt = require('bcryptjs');
 
 // Need a user class.
@@ -56,8 +57,6 @@ class User {
         return bcrypt.compareSync(aPassword, this.password);
     }
 
-
-
     getReviews() {
         return db.any(`
         select *
@@ -80,8 +79,45 @@ class User {
                 arrayOfReviewInstances.push(newInstance);
             });
             // console.log(arrayOfReviewInstances)
-            return arrayOfReviewInstances
+            return arrayOfReviewInstances;
         });
+    }
+
+    getFavorites() {
+        return db.any(`
+        select * 
+        from favorites
+        where user_id=${this.id}
+        `)
+        .then(userFavoritesData => {
+            const userInstanceFavoritesData = [];
+
+            userFavoritesData.forEach(favoritesData => {
+                const newInstance =  new Favorites(
+                    favoritesData.id,
+                    favoritesData.user_id,
+                    favoritesData.restaurant_id
+                );
+                userInstanceFavoritesData.push(newInstance)
+            });
+            return userInstanceFavoritesData;
+        })
+    }
+
+    setFavorite(restId) {
+        return db.result(`
+        insert into favorites(user_id, restaurant_id)
+        values
+        (${this.id}, ${restId})
+        `)
+    }
+
+    removeFavorite(restId) {
+        return db.result(`
+        delete from favorites
+        where
+        restaurant_id = ${restId}
+        `)
     }
 }
 

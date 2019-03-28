@@ -7,6 +7,7 @@ chai.use(chaiAsPromised).should();
 const User = require('../models/users')
 const Restaurant = require('../models/restaurants')
 const Reviews = require('../models/reviews')
+const Favorite = require('../models/favorites')
 
 // describe('Sanity check', function () {
 //     it('should be 2', function() {
@@ -169,4 +170,56 @@ describe('Users and Reviews', () => {
         }
     })
 
+})
+
+describe('Favorite model', async () => {
+    // get all favorites by user
+    it('should be able to retrieve favorites by user id', async () => {
+        const userFavorite = await Favorite.getByUserId(3);
+        expect(userFavorite).to.be.an.instanceOf(Array);
+        // console.log(userFavorite)
+
+        userFavorite.forEach(favorite => {
+            expect(favorite).to.be.instanceOf(Favorite);
+        })
+    }) 
+
+})
+
+describe('Users and Favorites model', async () => {
+    it('should allow user to get all their favorites given their id', async () => {
+        const theUser = await User.getById(3);
+        //use instance of user to get their favorites
+        const userFavorites = await theUser.getFavorites();
+        expect(userFavorites).to.be.instanceOf(Array);
+
+        userFavorites.forEach(favorite => {
+            expect(favorite).to.be.instanceOf(Favorite);
+        })
+    })
+
+    it('should allow a user to set a particular restaurant as a favorite', async () => {
+        const theUser = await User.getById(4);
+        // instance of user should be able to create a new favorite rest base on rest id
+        const userFavorites = await theUser.getFavorites();
+        const currentNumberOfFavorites = userFavorites.length;
+        await theUser.setFavorite(4);
+
+        const updatedUserFavorites = await theUser.getFavorites();
+        // check if number of favorites is different from old number of favorites
+        expect(updatedUserFavorites.length).not.to.equal(currentNumberOfFavorites);
+
+    })
+
+    // it('should allow a user to unset a particular restaurant as a favorite', async () => {
+    //     const theUser = await User.getById(3);
+    //     const userFavorites = await theUser.getFavorites();
+    //     // console.log(userFavorites)
+    //     const currentNumberOfFavorites = userFavorites.length;
+    //     await theUser.removeFavorite(5);
+
+    //     const updatedUserFavorites = await theUser.getFavorites();
+    //     // check is number of favorites is different from old number of favorites
+    //     expect(updatedUserFavorites.length).not.to.equal(currentNumberOfFavorites);
+    // })
 })
