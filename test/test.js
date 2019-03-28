@@ -23,7 +23,7 @@ describe('Restaurant model', () => {
         const arrayOfRestaurants = await Restaurant.getAll();
         expect(arrayOfRestaurants).to.be.instanceOf(Array);
     });
-    it('should be able to return a resaurant by id', async () => {
+    it('should be able to return a restaurant by id', async () => {
         const theRestaurant = await Restaurant.getById(3);
         expect(theRestaurant).to.be.instanceOf(Restaurant);
     })

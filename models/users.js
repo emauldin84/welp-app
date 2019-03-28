@@ -31,6 +31,11 @@ class User {
                 return null; // signal an invalid value
             })
     }
+    static getAll() {
+        // .any returns 0 or more results in an array
+        // but thats async so we `return` the call to db.any
+        return db.any(`select * from users`);
+    }
 
     // no static since this is an "instance method"
     // it belongs to the individual instance
