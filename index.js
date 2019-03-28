@@ -47,14 +47,10 @@ const server = http.createServer(async (req, res) => {
         } else if (method === "POST") {
             res.end('{ message: "it sounds like you would like to create"}');
         } else if (method === "PUT") {
-            res.end('{You wanna update, don\'t ya?}')
+            res.end('{message: You wanna update, don\'t ya?}')
         } else if (method === "DELETE") {
-            res.end('{rm the user}')
+            res.end('{message: rm the user}')
         }
-
-
-
-    
     } else {
         res.end(`{
             message: "Thank you for your patronage. Please send bitcoin."
