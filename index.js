@@ -7,7 +7,7 @@ const Restaurant = require('./models/restaurants');
 const User = require('./models/users');
 
 const server = http.createServer(async (req, res) => {
-    console.log(req)
+    console.log(req.url)
 
     res.statusCode = 200;
     res.setHeader('Content-Type', 'application/json');
@@ -16,10 +16,32 @@ const server = http.createServer(async (req, res) => {
     // if req.url is "/users", send them all users
     // if it does not match either, send a welcome message
 
-    if (req.url === "/restaurants") {
-        const allRestaurants = await Restaurant.getAll();
-        const restaurantJSON = JSON.stringify(allRestaurants);
-        res.end(restaurantJSON);
+    if (req.url.startsWith("/restaurants")) {
+        
+        const parts = req.url.split("/");
+        const method = req.method;
+        if (method === "GET") {
+            if (parts.length === 2) {
+                const allRestaurants = await Restaurant.getAll();
+                const restaurantJSON = JSON.stringify(allRestaurants);
+                res.end(restaurantJSON);
+            } else if (parts.length === 3) {
+                const restaurantId = parts[2];
+                const theRestaurant = await Restaurant.getById(restaurantId);
+                const theRestaurantJSON = JSON.stringify(theRestaurant);
+                res.end(theRestaurantJSON);
+            } else {
+                res.statusCode = 404;
+                res.end('Resource not found.')
+            }
+        } else if (method === "POST") {
+            res.end('{"message": "it sounds like you would like to create"}');
+        } else if (method === "PUT") {
+            res.end('{"message": "You wanna update, don\'t ya?"}')
+        } else if (method === "DELETE") {
+            res.end('{"message": "rm the restaurant"}')
+        }
+    
     } else if (req.url.startsWith("/users")) {
 
         
@@ -47,13 +69,13 @@ const server = http.createServer(async (req, res) => {
         } else if (method === "POST") {
             res.end('{ message: "it sounds like you would like to create"}');
         } else if (method === "PUT") {
-            res.end('{message: You wanna update, don\'t ya?}')
+            res.end('{"message": "You wanna update, don\'t ya?"}')
         } else if (method === "DELETE") {
-            res.end('{message: rm the user}')
+            res.end('{"message": "rm the user"}')
         }
     } else {
         res.end(`{
-            message: "Thank you for your patronage. Please send bitcoin."
+            "message": "Thank you for your patronage. Please send bitcoin."
         }`)
     }
 });
