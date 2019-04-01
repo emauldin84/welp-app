@@ -18,11 +18,11 @@ class Favorite {
         .then((favoriteData) => {
             const favoritesArray = [];
 
-            favoriteData.forEach((data) => {
-                const favoriteInstance = new Favorite(data.user_id, data.restaurant_id
+            favoriteData.forEach(data => {
+                const favoriteInstance = new Favorite(data.id, data.user_id, data.restaurant_id
                     );
                 favoritesArray.push(favoriteInstance);
-
+                
             })
             return favoritesArray;
         })
