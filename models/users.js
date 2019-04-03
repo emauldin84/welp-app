@@ -68,7 +68,7 @@ class User {
                     userData.password);
                 return aUser;
             })
-    }
+        }
 
     checkPassword(aPassword) {
         // const isCorrect = bcrypt.compareSync(aPassword, this.password);

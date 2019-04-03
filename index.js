@@ -6,6 +6,17 @@ const querystring = require('querystring');
 const hostname = '127.0.0.1';
 const port = 3000;
 
+// require session and session storage
+// This module lets express track users as they go from page to page
+const session = require('express-session');
+// Import the session storage module, and wire it up to the session module.
+const FileStore = require('session-file-store')(session);
+// tell express to use the session modules
+app.use(session({
+    store: new FileStore(),
+    secret: 'owekmfowmfkasfieoivnaworf'
+}))
+
 // Import my model class
 const Restaurant = require('./models/restaurants');
 const User = require('./models/users');
@@ -40,10 +51,15 @@ app.post('/login', async (req, res) => {
     const theUser = await User.getByEmail(req.body.email);
 
     if (theUser.checkPassword(req.body.password)){
-        res.redirect('/dashboard');
+        // save the user's id to the session
+        req.session.user = theUser.id;
+        // make sure the session is saved before we redirect
+        req.session.save(() => {
+            res.redirect('/dashboard');
+        });
     } else {
         // send the form back, but with the email already filled out
-        res.render('/login-form', {
+        res.render('login-form', {
             locals: {
                 email: req.body.email,
                 message: 'Password incorrect. Please try again.'
@@ -54,6 +70,7 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/dashboard', (req, res) => {
+    console.log(`The user's id is ${req.session.user}`);
     res.send('welcome to your welp dashboard');
 })
 
@@ -121,3 +138,11 @@ app.get('/users/:id/favorites', async (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+async function demo() {
+    const user = await User.getByEmail('dbyrne@th.com');
+    user.setPassword("pyschokiller");
+    await user.save();
+    console.log('you did the thing')
+}
+demo();
