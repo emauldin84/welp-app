@@ -23,15 +23,38 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/login', (req, res) => {
     // send the login form
     // res.send('this is the login form');
-    res.render('login-form');
+    res.render('login-form', {
+        locals: {
+            email: '',
+            message: ''
+        }
+    });
 });
 
 // when they submit the form, process the form data
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     console.log(req.body.email);
     console.log(req.body.password);
 
-    res.send('string');
+    // TODO: check password for real.
+    const theUser = await User.getByEmail(req.body.email);
+
+    if (theUser.checkPassword(req.body.password)){
+        res.redirect('/dashboard');
+    } else {
+        // send the form back, but with the email already filled out
+        res.render('/login-form', {
+            locals: {
+                email: req.body.email,
+                message: 'Password incorrect. Please try again.'
+            }
+        })
+    }
+
+});
+
+app.get('/dashboard', (req, res) => {
+    res.send('welcome to your welp dashboard');
 })
 
 app.get('/restaurants', async (req, res) => {
